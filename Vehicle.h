@@ -53,18 +53,9 @@ class Track: public Vehicle{
 public:
     Track(string &data_filename){
         cout<< data_filename<<"  created"<<endl;
-//        ifstream inFile(data_filename);
-//        string line;
-//        if(inFile.is_open()) {
-//            string warehouseName;
-//            while (getline(inFile, line)) {
-//                warehouseName.clear();
-//                string::iterator line_iter = line.begin();
-//                while(*line_iter != ','){ warehouseName.pusk_back(*line_iter++);}
-//
-//            }
-//            inFile.close();
-//        }
+
+
+
     }
     void moving_on_course(double theta) override{
 
@@ -73,11 +64,6 @@ public:
 
     }
     void get_state() override{}
-//private:
-//    Point currentPosition;
-//    string name;
-//    Warehouse* dest;
-//    map<shared_ptr< Warehouse*>, track_Schedule*> course_data;
 };
 
 class VehicleFactory{

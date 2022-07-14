@@ -7,7 +7,7 @@
 #define MVC_VEHICHOLES_SIMULATION_MODEL_H
 #include "Vehicle.h"
 #include "Warehouse.h"
-
+#include "MyExceptions.h"
 
 class Model {
 public:

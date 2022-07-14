@@ -40,16 +40,19 @@ void View::show() {
     Model &model = Model::get_Instance();
     Point p;
     for(int i = size-1; i>=0; i--){
-        if (i == (size-1)%3){
-            if(0<=(center.y + (i*zoom)) < 10){
-                cout<<" "<< center.y + (i*zoom) ;
+        if (i % 3 == (size-1)%3){
+            if(0<=(center.y + (i*zoom)) && (center.y + (i*zoom))  < 10){
+                cout<<"  "<< center.y + (i*zoom) ;
+            }
+            else if((center.y + (i*zoom))  <= -10 ){
+                cout<< center.y + (i*zoom);
             }
             else{
-                cout<< center.y + (i*zoom);
+                cout<<" "<< center.y + (i*zoom) ;
             }
         }
         else{
-            cout<<"  ";
+            cout<<"   ";
         }
         for(int j = size-1; j>=0; j--){
             p.y = center.y + (i*zoom);
@@ -58,9 +61,10 @@ void View::show() {
         }
         cout<< endl;
     }
-    for(int i = size-1; i>=0 ; i--){
-        if (i == (size-1)%3){
-            if(0<=(center.x + (i*zoom)) < 10){
+    cout<< "   ";
+    for(int i = 0; i < size ; i++){
+        if (i % 3 == (size-1)%3){
+            if(0<=(center.x + (i*zoom)) && (center.x + (i*zoom)) < 10){
                 cout<<" "<< center.x + (i*zoom) ;
             }
             else{
