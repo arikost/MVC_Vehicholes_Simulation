@@ -9,13 +9,16 @@ with the user.
 #include "Model.h"
 class Controller {
 public:	
-	Controller();
-	~Controller();
+	Controller(){
+	    this->view_ptr = new View();
+	}
+	~Controller() = default;
 
 	// creates View object, runs the program by accepting user commands, then destroys View object
 	void run(){
 	    VehicleFactory *vf;
         Model &model = Model::get_Instance();
+
 
 	}
 

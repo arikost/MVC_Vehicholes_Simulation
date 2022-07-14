@@ -13,14 +13,14 @@ public:
     View(int size=25);
     void default_args();
     void set_size(int size);
-    void set_center(Point* p);
+    void set_center(Point p);
     void set_zoom(double z);
-    void print();
+    void show();
 
 private:
-    string** plan;
     Point center;
     double zoom;
+    int size;
 };
 
 

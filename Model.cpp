@@ -36,3 +36,18 @@ void Model::addWarehouse(Warehouse *warehouse, const string & name) {
 void Model::advance() {
 
 }
+
+string Model::get_entity_by_point(Point p) {
+    for(auto & [key, value] : _vehicleList){
+        if(p.x == value.get()->currentPosition.x && p.y == value.get()->currentPosition.y){
+            return key.substr(0, 2);
+        }
+    }
+    for(auto & [key, value] : _warehouseList){
+        if(p.x == value.get()->getPosition().x && p.y == value.get()->getPosition().y){
+            return key.substr(0, 2);
+        }
+    }
+    return " .";
+}
+

@@ -14,7 +14,9 @@ public:
         this->inventory = inv;
         this->position = Point(position.x, position.y);
     }
-
+    Point getPosition(){
+        return position;
+    }
 private:
     int inventory;
     string name;

@@ -18,7 +18,7 @@ public:
 
     Warehouse* getWarehouse(const string&);
     void addWarehouse(Warehouse*, const string&);
-
+    string get_entity_by_point(Point);
     void advance();
 
 

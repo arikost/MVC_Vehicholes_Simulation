@@ -24,9 +24,11 @@ typedef struct track_Schedule{
 class Vehicle{
 public:
     state state;
+    Point currentPosition;
     virtual void moving_to_dest(Point point){} ;
     virtual void moving_on_course(double theta){} ;
     virtual void get_state(){};
+
 };
 
 class State_trooper: public Vehicle{
@@ -82,7 +84,7 @@ class VehicleFactory{
 public:
     Track * makeTrack(string  name){ return new Track(name);}
     Chopper * makeChopper(string  name){return new Chopper(name);}
-    State_trooper * makeState_trooper(string  name){return new State_trooper(name);}
+    State_trooper * makeState_trooper(string  name, Point p){return new State_trooper(name, p);}
 };
 
 
