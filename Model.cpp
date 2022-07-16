@@ -16,7 +16,7 @@ Model::Model() {
     addWarehouse(new Warehouse(Point(40,10), "Frankfurt",100000 ), "Frankfurt");
 }
 
-Vehicle *Model::getVehicle(const string & vehicle_name) {
+Vehicle * Model::getVehicle(const string & vehicle_name) {
     return _vehicleList[vehicle_name].get();
 }
 
@@ -25,7 +25,7 @@ void Model::addVehicle(Vehicle * vehicle, const string & vehicle_name) {
     _vehicleList[vehicle_name] = make_shared<Vehicle>(*vehicle);
 }
 
-Warehouse *Model::getWarehouse(const string & warehouse_name) {
+Warehouse * Model::getWarehouse(const string & warehouse_name) {
     return _warehouseList[warehouse_name].get();
 }
 
@@ -49,5 +49,14 @@ string Model::get_entity_by_point(Point p) {
         }
     }
     return " .";
+}
+
+void Model::print_all_wh() {
+    for(auto & [key, value] : _warehouseList){
+        cout<< key<<"  ";
+        value.get()->getPosition().print();
+        cout<<endl;
+    }
+
 }
 

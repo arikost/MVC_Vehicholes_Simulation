@@ -41,7 +41,7 @@ public:
                 whFile >> buff;
                 pos.y = stod(buff.substr(0, buff.size()-3));
                 whFile >> inv;
-                model.addWarehouse(new Warehouse(pos, whName, inv), whName);
+                model.addWarehouse(new Warehouse(pos, whName.substr(0, whName.size()-1), inv), whName.substr(0, whName.size()-1));
             }
         }
         if(strcmp(argv[3], "-t") != 0){
@@ -51,7 +51,22 @@ public:
             string track_dat_file = string(argv[i]);
             int pos = track_dat_file.find('.');
             string track_name = track_dat_file.substr(0,pos);
-            model.addVehicle(vf->makeTrack(track_dat_file), track_name);
+            /**check file validation**/
+            ifstream inFile(track_dat_file);
+            Point p;
+            string buff, name;
+            bool first_wh_flag = true;
+            while(inFile >> buff){
+                name = buff.substr(0, buff.find(','));
+                if(model.getWarehouse(name) == NULL){
+                    throw MyExceptions("wh dont exist");
+                }
+                if(first_wh_flag){
+                    first_wh_flag = false;
+                    p = model.getWarehouse(name)->getPosition();
+                }
+            }
+            model.addVehicle(vf->makeTrack(track_dat_file, p), track_name);
         }
 
     }
@@ -102,6 +117,7 @@ public:
 
             }
             if(buff == "show"){
+                model.print_all_wh();
                 view_ptr->show();
             }
             if(buff == "go"){

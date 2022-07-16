@@ -35,40 +35,39 @@ void View::set_center(Point p) {
 void View::set_zoom(double z) {
     this->zoom = z;
 }
-
 void View::show() {
     Model &model = Model::get_Instance();
     Point p;
     for(int i = size-1; i>=0; i--){
         if (i % 3 == (size-1)%3){
             if(0<=(center.y + (i*zoom)) && (center.y + (i*zoom))  < 10){
-                cout<<"  "<< center.y + (i*zoom) ;
+                cout<<"  "<< (int)(center.y + (i*zoom));
             }
-            else if((center.y + (i*zoom))  <= -10 ){
-                cout<< center.y + (i*zoom);
+            else if((center.y + (i*zoom))  <= -10 || (center.y + (i*zoom)) >= 100){
+                cout<< (int)(center.y + (i*zoom));
             }
             else{
-                cout<<" "<< center.y + (i*zoom) ;
+                cout<<" "<< (int)(center.y + (i*zoom)) ;
             }
         }
         else{
             cout<<"   ";
         }
-        for(int j = size-1; j>=0; j--){
-            p.y = center.y + (i*zoom);
+        p.y = center.y + (i*zoom);
+        for(int j = 0; j < size  ; j++){
             p.x = center.x + (j*zoom);
             cout<< model.get_entity_by_point(p);
         }
         cout<< endl;
     }
-    cout<< "   ";
+    cout<< "  ";
     for(int i = 0; i < size ; i++){
         if (i % 3 == (size-1)%3){
             if(0<=(center.x + (i*zoom)) && (center.x + (i*zoom)) < 10){
-                cout<<" "<< center.x + (i*zoom) ;
+                cout<<" "<< (int)(center.y + (i*zoom)) ;
             }
             else{
-                cout<< center.x + (i*zoom);
+                cout<< (int)(center.y + (i*zoom));
             }
         }
         else{

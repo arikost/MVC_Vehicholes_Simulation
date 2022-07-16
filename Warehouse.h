@@ -15,7 +15,7 @@ public:
         this->position = Point(position.x, position.y);
     }
     Point getPosition(){
-        return position;
+        return this->position;
     }
 private:
     int inventory;

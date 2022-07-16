@@ -8,6 +8,11 @@ using namespace std;
 double to_radians(double theta_d);
 double to_degrees(double theta_r);
 // class declarations
+typedef struct time_hm{
+    int hours;
+    int minutes;
+}time_hm;
+
 typedef struct Point {
 	double x;
 	double y;

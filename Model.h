@@ -20,7 +20,7 @@ public:
     void addWarehouse(Warehouse*, const string&);
     string get_entity_by_point(Point);
     void advance();
-
+    void print_all_wh();
 
     Model(const Model&) = delete;
     Model& operator= (const Model&) = delete;
