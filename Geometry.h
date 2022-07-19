@@ -11,6 +11,13 @@ double to_degrees(double theta_r);
 typedef struct time_hm{
     int hours;
     int minutes;
+    time_hm(int, int);
+
+    time_hm();
+
+    double operator-(time_hm t1);
+    bool operator>(time_hm t1);
+    bool operator<(time_hm t1);
 }time_hm;
 
 typedef struct Point {

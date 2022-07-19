@@ -49,8 +49,6 @@ public:
         }
         for (int i = 4; i < argc ; ++i) {
             string track_dat_file = string(argv[i]);
-            int pos = track_dat_file.find('.');
-            string track_name = track_dat_file.substr(0,pos);
             /**check file validation**/
             ifstream inFile(track_dat_file);
             Point p;
@@ -66,7 +64,7 @@ public:
                     p = model.getWarehouse(name)->getPosition();
                 }
             }
-            model.addVehicle(vf->makeTrack(track_dat_file, p), track_name);
+            model.addVehicle(p, track_dat_file, "Track");
         }
 
     }
@@ -77,7 +75,6 @@ public:
 
         Model &model = Model::get_Instance();
         string buff;
-        int time = 0;
         while( cin >> buff){
             if(buff == "exit"){
                 cout << "goodbye..."<< endl;
@@ -121,11 +118,18 @@ public:
                 view_ptr->show();
             }
             if(buff == "go"){
-                time++;
                 model.advance();
             }
             if(buff == "create"){
-
+                string name, type;
+                Point p;
+                cin >> name;
+                cin >> type;
+                cin >> buff;
+                p.x = stod(buff.substr(1, buff.size() - 2));
+                cin >> buff;
+                p.y = stod(buff.substr(0,buff.size()-2));
+                model.addVehicle(p,name,type);
             }
             if(buff == "course"){
 

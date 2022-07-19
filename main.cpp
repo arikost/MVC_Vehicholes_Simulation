@@ -1,6 +1,6 @@
 #include "Controller.h"
-int main(int argc, char** argv) {
 
+int main(int argc, char** argv) {
     Controller controller;
     try {
         controller.init(argc, argv);

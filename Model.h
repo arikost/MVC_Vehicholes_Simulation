@@ -14,7 +14,7 @@ public:
     static Model & get_Instance();
 
     Vehicle* getVehicle(const string&);
-    void addVehicle(Vehicle*, const string&);
+    void addVehicle(Point &,  string&, string);
 
     Warehouse* getWarehouse(const string&);
     void addWarehouse(Warehouse*, const string&);
@@ -29,6 +29,8 @@ public:
 private:
     Model();
     static Model* ptr;
+    VehicleFactory vf;
+    time_hm time;
     map<string, shared_ptr<Vehicle>> _vehicleList;
     map<string, shared_ptr<Warehouse>> _warehouseList;
 };

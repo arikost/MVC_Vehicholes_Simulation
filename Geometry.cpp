@@ -69,3 +69,36 @@ bool Point::operator==(const Point & rhs)
 }
 
 
+double time_hm::operator-(time_hm t1) {
+    return hours - t1.hours + (minutes - t1.minutes)/60;
+}
+
+bool time_hm::operator>(time_hm t1) {
+    if(hours > t1.hours)
+        return true;
+    else if(hours < t1.hours)
+        return false;
+    else
+        return minutes > t1.minutes;
+}
+
+bool time_hm::operator<(time_hm t1) {
+    if(hours < t1.hours)
+        return true;
+    else if(hours > t1.hours)
+        return false;
+    else
+        return minutes < t1.minutes;
+
+}
+
+time_hm::time_hm(int h, int m) {
+    hours = h;
+    minutes = m;
+}
+
+time_hm::time_hm() {
+    hours = 0;
+    minutes = 0;
+}
+
