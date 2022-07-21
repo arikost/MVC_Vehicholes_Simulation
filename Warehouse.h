@@ -12,13 +12,18 @@ public:
         cout<< name<< " created"<<endl;
         this->name = name;
         this->inventory = inv;
-        this->position = Point(position.x, position.y);
+        this->position = position;
     }
     Point getPosition(){
         return this->position;
     }
-private:
+    void get_state(){
+        cout << "at position ";
+        position.print();
+        cout<<", Inventory: "<<inventory;
+    }
     int inventory;
+private:
     string name;
     Point position;
 

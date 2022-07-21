@@ -60,7 +60,7 @@ Point::Point()
 
 void Point::print() const
 {
-	cout << setprecision(2) << "(" << x << ", " << y << ")";
+	cout << setprecision(2) << fixed << "(" << x << ", " << y << ")";
 }
 
 bool Point::operator==(const Point & rhs)
@@ -68,9 +68,18 @@ bool Point::operator==(const Point & rhs)
 	return x == rhs.x && y == rhs.y;
 }
 
+void Point::operator=(const Point p1) {
+    x = p1.x;
+    y = p1.y;
+}
+
+double Point::getDistance(Point p1) {
+    return sqrt(pow(x - p1.x, 2) + pow(y - p1.y, 2));
+}
+
 
 double time_hm::operator-(time_hm t1) {
-    return hours - t1.hours + (minutes - t1.minutes)/60;
+    return  (hours - t1.hours) + (double) (minutes - t1.minutes)/60;
 }
 
 bool time_hm::operator>(time_hm t1) {
@@ -100,5 +109,9 @@ time_hm::time_hm(int h, int m) {
 time_hm::time_hm() {
     hours = 0;
     minutes = 0;
+}
+
+void time_hm::print() {
+    cout<< hours<<":"<<minutes;
 }
 

@@ -13,15 +13,16 @@ class Model {
 public:
     static Model & get_Instance();
 
-    Vehicle* getVehicle(const string&);
-    void addVehicle(Point &,  string&, string);
+    Vehicle* getVehicle( string&);
+    void addVehicle(Point &,  string&, string&, string);
 
     Warehouse* getWarehouse(const string&);
     void addWarehouse(Warehouse*, const string&);
-    string get_entity_by_point(Point);
+    string get_entity_by_point(Point, double );
     void advance();
     void print_all_wh();
-
+    void print_all_ve();
+    time_hm getTime();
     Model(const Model&) = delete;
     Model& operator= (const Model&) = delete;
     Model(Model&&) = delete;

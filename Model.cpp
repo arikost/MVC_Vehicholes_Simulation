@@ -13,27 +13,46 @@ Model &Model::get_Instance() {
     return *ptr;
 }
 Model::Model() {
-    addWarehouse(new Warehouse(Point(40,10), "Frankfurt",100000 ), "Frankfurt");
+    string fran = "Frankfurt";
+    addWarehouse(new Warehouse(Point(40,10), "Frankfurt",100000 ),  "Frankfurt");
 }
 
-Vehicle * Model::getVehicle(const string & vehicle_name) {
-    return _vehicleList[vehicle_name].get();
+Vehicle * Model::getVehicle( string & vehicle_name) {
+    if(_vehicleList.find(vehicle_name) != _vehicleList.end())
+        return _vehicleList[vehicle_name].get();
+    else
+        return NULL;
 }
 
-void Model::addVehicle(Point & starting_point , string & vehicle_name, string type) {
-    if(type == "Track"){
-        _vehicleList[type] = make_shared<Track>(*vf.makeTrack(vehicle_name,starting_point));
+void Model::addVehicle(Point & starting_point , string & vehicle_name,string &wareHouse, string type) {
+    if(_vehicleList.count(vehicle_name) != 0){
+        cerr<<"Error:: vehicle "<< vehicle_name<< " exists\n";
+    }
+    else if(type == "Track"){
+        string track_name = vehicle_name.substr(0,vehicle_name.find('.'));
+        _vehicleList[track_name] = make_shared<Track>(*vf.makeTrack(vehicle_name, starting_point));
     }
     else if(type == "Chopper"){
-        _vehicleList[type] = make_shared<Chopper>(*vf.makeChopper(starting_point, vehicle_name));
+        _vehicleList[vehicle_name] = make_shared<Chopper>(*vf.makeChopper(starting_point));
     }
     else if(type == "State_trooper"){
-        _vehicleList[type] = make_shared<State_trooper>(*vf.makeState_trooper(starting_point, vehicle_name));
+        Warehouse *wh = getWarehouse(wareHouse);
+        if(wh == NULL){
+            throw MyExceptions("warehouse doesn't exist:: "+wareHouse);
+        }
+        starting_point.x = wh->getPosition().x;
+        starting_point.y = wh->getPosition().y;
+        _vehicleList[vehicle_name] = make_shared<State_trooper>(*vf.makeState_trooper(starting_point));
+        State_trooper * st = (State_trooper*) _vehicleList[vehicle_name].get();
+        st->visitedWH.push_back(wareHouse);
     }
 }
 
 Warehouse * Model::getWarehouse(const string & warehouse_name) {
-    return _warehouseList[warehouse_name].get();
+    if(_warehouseList.find(warehouse_name) != _warehouseList.end())
+        return _warehouseList[warehouse_name].get();
+    else
+        return NULL;
 }
 
 void Model::addWarehouse(Warehouse *warehouse, const string & name) {
@@ -42,22 +61,110 @@ void Model::addWarehouse(Warehouse *warehouse, const string & name) {
 
 void Model::advance() {
     time.hours++;
-    for(auto & [key, value] : _vehicleList){
-        if(key == "Track"){
-            Track * track = (Track*) value.get();
+    for (auto &[key, value] : _vehicleList) {
+        if (value->type == "Track") {
+            Track *track = (Track *) value.get();
+            if (track->state == offRoad || track->state == stopped) {
+                break;
+            } else if (track->state == movingTo && time > track->get_dataNode().arrival_time) {
+                track->currentPosition = track->destination;
+                track->state = parked;
+                track->inventory -= track->get_dataNode().case_quantity;
+                getWarehouse(track->get_dataNode().whName)->inventory += track->get_dataNode().case_quantity;
+            } else if (track->state == movingTo && time < track->get_dataNode().arrival_time) {
+                track->currentPosition.x += cos(track->pv.theta) * (track->speed);
+                track->currentPosition.y += sin(track->pv.theta) * (track->speed);
+            } else if (track->state == parked && time > track->get_dataNode().departure_time) {
+                time_hm t = track->get_dataNode().departure_time;
+                track->dataNodeNext();
+                track->moving_to_dest(getWarehouse(track->get_dataNode().whName)->getPosition());
+                track->currentPosition.x += cos(track->pv.theta) * track->speed / (time - t);
+                track->currentPosition.y += sin(track->pv.theta) * track->speed / (time - t);
+                track->state = movingTo;
+            } else if (track->state == offRoad) {
+                break;
+            }
+        } else if (value->type == "State_trooper") {
+            State_trooper *st = (State_trooper *) value.get();
+            if (st->state == stopped) {
+                continue;
+            } else if (st->state == parked) {
+                double min_dist = 1000000, current_dist;
+                string wh;
+                Point p;
+                for (auto &[key, value] : _warehouseList) {
+                    if (count(st->visitedWH.begin(), st->visitedWH.end(), key)) {
+                        continue;
+                    } else {
+                        current_dist = sqrt(pow(st->currentPosition.x - value.get()->getPosition().x, 2) +
+                                            pow(st->currentPosition.y - value.get()->getPosition().y, 2));
+                        if (current_dist < min_dist) {
+                            min_dist = current_dist;
+                            wh = key;
+                            p = value->getPosition();
+                        }
+                    }
+                }
+                st->nextWh = wh;
+                st->moving_to_dest(p);
+                st->state = movingTo;
+                st->currentPosition.x += cos(st->pv.theta) * st->speed;
+                st->currentPosition.y += sin(st->pv.theta) * st->speed;
+            } else if (st->state == movingTo) {
+                if (st->getDistFromDest() <= 0.9 && (st->movement == toDest || st->movement == toPosition)) {
+                    st->state = parked;
+                    st->currentPosition = st->destination;
+                    st->visitedWH.push_back(st->nextWh);
+                } else {
+                    st->currentPosition.x += cos(st->pv.theta) * st->speed;
+                    st->currentPosition.y += sin(st->pv.theta) * st->speed;
+                }
+            }
 
+        } else if (value->type == "Chopper") {
+            Chopper *chop = (Chopper *) value.get();
+            if (chop->state == movingTo) {
+                if (chop->movement == onCourse) {
+                    chop->currentPosition.x += cos(chop->pv.theta) * chop->speed;
+                    chop->currentPosition.y += sin(chop->pv.theta) * chop->speed;
+                } else if (chop->getDistFromDest() <= chop->speed && chop->movement == toPosition) {
+                    chop->state = parked;
+                    chop->currentPosition = chop->destination;
+                }
+            } else if (chop->state == parked || chop->state == stopped) {
+                continue;
+            }
+        }
+    }
+    for (auto &[key, value] : _vehicleList) {
+        if(value.get()->type == "Chopper"){
+            bool flag = true;
+            Chopper *chop = (Chopper *) value.get();
+            if(chop->attacking_mod){
+                Point trackPosition = chop->target->currentPosition;
+                if(chop->currentPosition.getDistance(trackPosition) <= chop->attacking_range) {
+                    for (auto &[key2, value2] : _vehicleList) {
+                        if (value2.get()->type == "State_trooper" &&
+                            value2->currentPosition.getDistance(trackPosition) <= 10) {
+                            flag = false;
+                        }
+                    }
+                }
+                else
+                    flag= false;
+                chop->attack(flag);
+            }
         }
     }
 }
-
-string Model::get_entity_by_point(Point p) {
+string Model::get_entity_by_point(Point p, double zoom) {
     for(auto & [key, value] : _vehicleList){
-        if(p.x == value.get()->getCurrentPosition().x && p.y == value.get()->getCurrentPosition().y){
+        if(abs(p.x  - value.get()->currentPosition.x - 0.1) < zoom/2 && abs(p.y  - value.get()->currentPosition.y - 0.1) < zoom/2){
             return key.substr(0, 2);
         }
     }
     for(auto & [key, value] : _warehouseList){
-        if(p.x == value.get()->getPosition().x && p.y == value.get()->getPosition().y){
+        if(abs(p.x  - value.get()->getPosition().x - 0.1) < zoom/2 && abs(p.y  - value.get()->getPosition().y - 0.1) < zoom/2){
             return key.substr(0, 2);
         }
     }
@@ -66,10 +173,25 @@ string Model::get_entity_by_point(Point p) {
 
 void Model::print_all_wh() {
     for(auto & [key, value] : _warehouseList){
-        cout<< key<<"  ";
-        value.get()->getPosition().print();
+        cout<< "WareHouses ";
+        cout<< key<<" ";
+        value.get()->get_state();
         cout<<endl;
     }
 
 }
+
+void Model::print_all_ve() {
+    for(auto & [key, value] : _vehicleList){
+        cout<<value->type<<" " << key <<" ";
+        value->get_state();
+        cout<<endl;
+    }
+}
+
+time_hm Model::getTime() {
+    return time;
+}
+
+
 

@@ -56,7 +56,7 @@ void View::show() {
         p.y = center.y + (i*zoom);
         for(int j = 0; j < size  ; j++){
             p.x = center.x + (j*zoom);
-            cout<< model.get_entity_by_point(p);
+            cout<< model.get_entity_by_point(p, zoom).substr(0, 2);
         }
         cout<< endl;
     }

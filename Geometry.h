@@ -14,7 +14,7 @@ typedef struct time_hm{
     time_hm(int, int);
 
     time_hm();
-
+    void print();
     double operator-(time_hm t1);
     bool operator>(time_hm t1);
     bool operator<(time_hm t1);
@@ -25,7 +25,9 @@ typedef struct Point {
 	double y;
 	Point(double x, double y);
 	Point();
+	double getDistance(Point p1);
 	void print() const;
+	void operator=(const Point p1);
 	bool operator==(const Point& rhs);
 } Point;
 struct Polar_vector;
