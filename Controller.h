@@ -162,7 +162,7 @@ public:
                     }
                     vehicle->moving_on_course(to_radians(stod(buff)));
                     vehicle->movement = onCourse;
-                    if(vehicle->type == "Chopper"){
+                    if(vehicle->type == Cho){
                         cin >> buff;
                         if(!check_numeric(buff)){
                             throw MyExceptions("Error:: illegal parameter"+buff);
@@ -184,7 +184,7 @@ public:
                     p.y = stod(buff);
                     vehicle->moving_to_dest(p);
                     vehicle->movement = toPosition;
-                    if(vehicle->type == "Chopper"){
+                    if(vehicle->type == Cho){
                         cin >> buff;
                         if(!check_numeric(buff)){
                             throw MyExceptions("Error:: illegal parameter"+buff);
@@ -198,7 +198,7 @@ public:
                     if(wh == NULL){
                         throw MyExceptions("wh dont exist "+buff);
                     }
-                    if(vehicle->type != "State_trooper"){
+                    if(vehicle->type != Sta){
                         throw MyExceptions("Error:: illegal commend: "+ buff+" not a State_trooper");
                     }else {
                         State_trooper *st = (State_trooper *) vehicle;
@@ -208,7 +208,7 @@ public:
                     }
                 }
                 else if (buff == "attack") {
-                    if(vehicle->type != "Chopper"){
+                    if(vehicle->type != Cho){
                         throw MyExceptions("Error:: "+vehicle->name+" is not a Chopper");
                     }
                     Chopper * chop = (Chopper*) vehicle;
@@ -217,7 +217,7 @@ public:
                     if(target == NULL){
                         throw MyExceptions("Error:: "+ buff + " doesn't exist");
                     }
-                    if(target->type != "Track"){
+                    if(target->type != Tra){
                         throw MyExceptions("Error:: "+target->name+" is not a Track");
                     }
                     chop->set_target((Track*) target);

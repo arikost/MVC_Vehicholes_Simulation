@@ -63,7 +63,7 @@ void Model::advance() {
     time.hours++;
     /**vehicles movement**/
     for (auto &[key, value] : _vehicleList) {
-        if (value->type == "Track") {
+        if (value->type == Tra) {
             Track *track = (Track *) value.get();
             if (track->state == offRoad || track->state == stopped) {
                 break;
@@ -85,7 +85,7 @@ void Model::advance() {
             } else if (track->state == offRoad) {
                 break;
             }
-        } else if (value->type == "State_trooper") {
+        } else if (value->type == Sta) {
             State_trooper *st = (State_trooper *) value.get();
             if (st->state == stopped) {
                 continue;
@@ -122,7 +122,7 @@ void Model::advance() {
                 }
             }
 
-        } else if (value->type == "Chopper") {
+        } else if (value->type == Cho) {
             Chopper *chop = (Chopper *) value.get();
             if (chop->state == movingTo) {
                 if (chop->movement == onCourse) {
@@ -139,7 +139,7 @@ void Model::advance() {
     }
     /**Chopper attacking**/
     for (auto &[key, value] : _vehicleList) {
-        if(value.get()->type == "Chopper"){
+        if(value.get()->type == Cho){
             bool flag = true;//flag is the indicator for a Success or failure of the attack
             Chopper *chop = (Chopper *) value.get();
             if(chop->attacking_mod){
@@ -148,7 +148,7 @@ void Model::advance() {
                 if(chop->currentPosition.getDistance(trackPosition) <= chop->attacking_range) {
                     for (auto &[key2, value2] : _vehicleList) {
                         /**checking fo State_trooper in radios of 10 km from the target position**/
-                        if (value2.get()->type == "State_trooper" &&
+                        if (value2.get()->type == Sta &&
                             value2->currentPosition.getDistance(trackPosition) <= 10) {
                             flag = false;
                         }

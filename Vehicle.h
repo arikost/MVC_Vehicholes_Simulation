@@ -16,17 +16,21 @@
 
 enum state{stopped=1, parked, offRoad, movingTo};
 enum movement_type{onCourse=1, toDest, toPosition};
+enum v_type{Cho, Sta, Tra}; // types of vehicles
 class Chopper;
 class Track;
 class State_trooper;
 class Vehicle{
 public:
-
+    /**
+     * Vehicle is an abstract class
+     * with parameter v_type to determent how to cast
+     * an object from an inheriting class**/
     virtual void moving_to_dest(Point point) = 0;
     virtual void moving_on_course(double theta) = 0;
     virtual void get_state() = 0;
-    /**members**/
-    string type;
+    /**parameters**/
+    v_type type;
     string name;
     Cartesian_vector cv;
     Polar_vector pv;
@@ -52,7 +56,7 @@ public:
     Track(string &data_filename, Point & starting_point, string & name){
         this->name = name;
         currentPosition = starting_point;
-        type = "Track";
+        type = Tra;
         inventory = 105;
         state = parked;
         ifstream data_file_obj(data_filename);
@@ -154,7 +158,7 @@ public:
     Track * target;
     Chopper(Point &starting_point, string & name){
         this->name = name;
-        this->type = "Chopper";
+        this->type = Cho;
         currentPosition = starting_point;
         state = parked;
         attacking_range = 2;
@@ -222,7 +226,7 @@ public:
     string nextWh;
     State_trooper(Point &starting_point, string & name){
         this->name = name;
-        this->type = "State_trooper";
+        this->type = Sta;
         currentPosition = starting_point;
         state = parked;
         speed = 0.9 ;
