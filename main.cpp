@@ -3,6 +3,7 @@
 int main(int argc, char** argv) {
     Controller controller;
     controller.init(argc, argv);
+    /** interactive exceptions system**/
     while(1) {
         try {
             controller.run();

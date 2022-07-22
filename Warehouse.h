@@ -9,7 +9,6 @@
 class Warehouse {
 public:
     Warehouse(Point position, string name, int inv){
-        cout<< name<< " created"<<endl;
         this->name = name;
         this->inventory = inv;
         this->position = position;

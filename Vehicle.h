@@ -25,7 +25,9 @@ public:
     virtual void moving_to_dest(Point point) = 0;
     virtual void moving_on_course(double theta) = 0;
     virtual void get_state() = 0;
+    /**members**/
     string type;
+    string name;
     Cartesian_vector cv;
     Polar_vector pv;
     double speed;
@@ -47,7 +49,8 @@ protected:
     int courser;
 public:
     int inventory;
-    Track(string &data_filename, Point & starting_point){
+    Track(string &data_filename, Point & starting_point, string & name){
+        this->name = name;
         currentPosition = starting_point;
         type = "Track";
         inventory = 105;
@@ -131,7 +134,7 @@ public:
                 cout << ", was stopped";
                 break;
         }
-        cout << "Carts: "<< inventory;
+        cout << ", Carts: "<< inventory;
     }
     track_dataNode & get_dataNode(){
         return _trackCourse_data[courser];
@@ -149,7 +152,8 @@ public:
     int attacking_range;
     bool attacking_mod;
     Track * target;
-    Chopper(Point &starting_point){
+    Chopper(Point &starting_point, string & name){
+        this->name = name;
         this->type = "Chopper";
         currentPosition = starting_point;
         state = parked;
@@ -180,7 +184,9 @@ public:
                         break;
                     case onCourse:
                         cout << ", heading on course "<<setprecision(2) << fixed << to_degrees(pv.theta);
+                        break;
                 }
+                break;
             case stopped:
                 cout << ", was stopped";
                 break;
@@ -199,11 +205,14 @@ public:
         state = stopped;
         currentPosition = target->currentPosition;
         if(flag) {
+            cout<< name<<" robbed "<<target->name<<" successfully\n";
             target->state = offRoad;
             target->inventory = 0;
             attacking_range++;
-        }else
+        }else {
+            cout << name << " failed to robb " << target->name << endl;
             attacking_range--;
+        }
     }
 };
 
@@ -211,7 +220,8 @@ class State_trooper: public Vehicle{
 public:
     vector<string> visitedWH;
     string nextWh;
-    State_trooper(Point &starting_point){
+    State_trooper(Point &starting_point, string & name){
+        this->name = name;
         this->type = "State_trooper";
         currentPosition = starting_point;
         state = parked;
@@ -261,9 +271,9 @@ public:
 
 class VehicleFactory{
 public:
-    Track * makeTrack(string  data_filename, Point & starting_point){ return new Track(data_filename, starting_point);}
-    Chopper * makeChopper(Point & starting_point){return new Chopper(starting_point);}
-    State_trooper * makeState_trooper(Point & starting_point){return new State_trooper(starting_point);}
+    Track * makeTrack(string  data_filename, Point & starting_point, string & name){ return new Track(data_filename, starting_point,name);}
+    Chopper * makeChopper(Point & starting_point, string & name){return new Chopper(starting_point,name);}
+    State_trooper * makeState_trooper(Point & starting_point, string & name){return new State_trooper(starting_point, name);}
 };
 
 

@@ -119,6 +119,7 @@ public:
 
             }
             else if(buff == "show"){
+                cout<<endl;
                 view_ptr->show();
             }
             else if(buff == "go"){
@@ -207,11 +208,19 @@ public:
                     }
                 }
                 else if (buff == "attack") {
+                    if(vehicle->type != "Chopper"){
+                        throw MyExceptions("Error:: "+vehicle->name+" is not a Chopper");
+                    }
                     Chopper * chop = (Chopper*) vehicle;
                     cin >>buff;
-                    Track * track = (Track*)model.getVehicle(buff);
-                    chop->attacking_mod = true;
-                    chop->target = track;
+                    Vehicle * target = model.getVehicle(buff);
+                    if(target == NULL){
+                        throw MyExceptions("Error:: "+ buff + " doesn't exist");
+                    }
+                    if(target->type != "Track"){
+                        throw MyExceptions("Error:: "+target->name+" is not a Track");
+                    }
+                    chop->set_target((Track*) target);
                 }
                 else if (buff == "stop") {
                     vehicle->state = stopped;
@@ -227,6 +236,7 @@ public:
             if(!isdigit(*it) && *it != '.'){
                 return false;
             }
+            it++;
         }
         return true;
     }

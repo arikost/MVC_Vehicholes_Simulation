@@ -30,10 +30,10 @@ void Model::addVehicle(Point & starting_point , string & vehicle_name,string &wa
     }
     else if(type == "Track"){
         string track_name = vehicle_name.substr(0,vehicle_name.find('.'));
-        _vehicleList[track_name] = make_shared<Track>(*vf.makeTrack(vehicle_name, starting_point));
+        _vehicleList[track_name] = make_shared<Track>(*vf.makeTrack(vehicle_name, starting_point, track_name));
     }
     else if(type == "Chopper"){
-        _vehicleList[vehicle_name] = make_shared<Chopper>(*vf.makeChopper(starting_point));
+        _vehicleList[vehicle_name] = make_shared<Chopper>(*vf.makeChopper(starting_point, vehicle_name));
     }
     else if(type == "State_trooper"){
         Warehouse *wh = getWarehouse(wareHouse);
@@ -42,7 +42,7 @@ void Model::addVehicle(Point & starting_point , string & vehicle_name,string &wa
         }
         starting_point.x = wh->getPosition().x;
         starting_point.y = wh->getPosition().y;
-        _vehicleList[vehicle_name] = make_shared<State_trooper>(*vf.makeState_trooper(starting_point));
+        _vehicleList[vehicle_name] = make_shared<State_trooper>(*vf.makeState_trooper(starting_point,vehicle_name));
         State_trooper * st = (State_trooper*) _vehicleList[vehicle_name].get();
         st->visitedWH.push_back(wareHouse);
     }
@@ -61,6 +61,7 @@ void Model::addWarehouse(Warehouse *warehouse, const string & name) {
 
 void Model::advance() {
     time.hours++;
+    /**vehicles movement**/
     for (auto &[key, value] : _vehicleList) {
         if (value->type == "Track") {
             Track *track = (Track *) value.get();
@@ -136,14 +137,17 @@ void Model::advance() {
             }
         }
     }
+    /**Chopper attacking**/
     for (auto &[key, value] : _vehicleList) {
         if(value.get()->type == "Chopper"){
-            bool flag = true;
+            bool flag = true;//flag is the indicator for a Success or failure of the attack
             Chopper *chop = (Chopper *) value.get();
             if(chop->attacking_mod){
                 Point trackPosition = chop->target->currentPosition;
+                /**checking if the target is in range**/
                 if(chop->currentPosition.getDistance(trackPosition) <= chop->attacking_range) {
                     for (auto &[key2, value2] : _vehicleList) {
+                        /**checking fo State_trooper in radios of 10 km from the target position**/
                         if (value2.get()->type == "State_trooper" &&
                             value2->currentPosition.getDistance(trackPosition) <= 10) {
                             flag = false;
